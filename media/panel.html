@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TestAPI - API Tester</title>
+  <style>
+    body { font-family: sans-serif; padding: 10px; background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
+    h2 { margin-top: 0; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, textarea, select, button {
+      width: 100%; margin: 5px 0; padding: 8px;
+      border-radius: 5px; border: 1px solid var(--vscode-input-border);
+      background-color: var(--vscode-input-background);
+      color: var(--vscode-input-foreground);
+      font-size: 14px;
+    }
+    button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; cursor: pointer; }
+    button:hover { background: var(--vscode-button-hoverBackground); }
+    pre {
+      background: var(--vscode-editor-background); color: var(--vscode-terminal-ansiBrightGreen);
+      padding: 10px; white-space: pre-wrap;
+      border-radius: 6px; font-size: 13px;
+      border: 1px solid var(--vscode-panel-border);
+    }
+    .row { display: flex; gap: 10px; }
+    .row > * { flex: 1; }
+    .tabs { display: flex; margin-top: 10px; border-bottom: 1px solid var(--vscode-panel-border); }
+    .tab {
+      padding: 8px 15px; text-align: center; cursor: pointer;
+      background: var(--vscode-panel-background);
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+      color: var(--vscode-tab-inactiveForeground);
+    }
+    .tab:hover {
+      color: var(--vscode-tab-activeForeground);
+    }
+    .tab.active {
+      background: var(--vscode-tab-activeBackground);
+      border-color: var(--vscode-panel-border);
+      border-bottom: 1px solid var(--vscode-tab-activeBackground);
+      font-weight: bold;
+      color: var(--vscode-tab-activeForeground);
+    }
+    .tab-content { border: 1px solid var(--vscode-panel-border); padding: 10px; background: var(--vscode-panel-background); }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>TestAPI - API Request</h2>
+
+  <div class="row">
+    <div>
+      <label>Method:</label>
+      <select id="method">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>DELETE</option>
+        <option>PATCH</option>
+      </select>
+    </div>
+    <div style="flex:3">
+      <label>URL:</label>
+      <input id="url" placeholder="https://api.example.com" />
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="auth">Auth</div>
+    <div class="tab" data-tab="headers">Headers</div>
+    <div class="tab" data-tab="body">Body</div>
+  </div>
+
+  <div id="authContent" class="tab-content">
+    <label>Authentication:</label>
+    <select id="authType">
+      <option value="none">None</option>
+      <option value="bearer">Bearer Token</option>
+      <option value="basic">Basic Auth</option>
+      <option value="apikey">API Key (Header)</option>
+    </select>
+    <label>Token / Credentials:</label>
+    <input id="authValue" placeholder="Enter token or user:pass" />
+  </div>
+
+  <div id="headersContent" class="tab-content hidden">
+    <label>Headers (JSON):</label>
+    <textarea id="headersInput" rows="4">{}</textarea>
+  </div>
+
+  <div id="bodyContent" class="tab-content hidden">
+    <label>Body Type:</label>
+    <select id="bodyType">
+      <option value="none">None</option>
+      <option value="json">JSON</option>
+      <option value="urlencoded">x-www-form-urlencoded</option>
+      <option value="raw">Raw</option>
+      <option value="formdata">Multipart Form-Data (Files)</option>
+    </select>
+
+    <div id="bodyJsonRaw" class="hidden">
+      <label>Body:</label>
+      <textarea id="bodyInput" rows="6"></textarea>
+    </div>
+
+    <div id="bodyFiles" class="hidden">
+      <label>Select Files:</label>
+      <input type="file" id="fileInput" multiple />
+      <label>Extra Fields (JSON):</label>
+      <textarea id="extraFields" rows="3" placeholder='{"key":"value"}'></textarea>
+    </div>
+  </div>
+
+  <button id="sendBtn">Send Request</button>
+
+  <h3>Response:</h3>
+  <pre id="response"></pre>
+
+  <script src="{{mainScript}}"></script>
+</body>
+</html>
