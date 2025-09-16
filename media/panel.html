@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>TestAPI - API Tester</title>
   <style>
+    /* Your existing styles */
     body { font-family: sans-serif; padding: 10px; background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
     h2 { margin-top: 0; }
     label { font-weight: bold; display: block; margin-top: 10px; }
-    input, textarea, select, button {
+    input, select, button {
       width: 100%; margin: 5px 0; padding: 8px;
       border-radius: 5px; border: 1px solid var(--vscode-input-border);
       background-color: var(--vscode-input-background);
@@ -16,35 +17,25 @@
     }
     button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; cursor: pointer; }
     button:hover { background: var(--vscode-button-hoverBackground); }
-    pre {
-      background: var(--vscode-editor-background); color: var(--vscode-terminal-ansiBrightGreen);
-      padding: 10px; white-space: pre-wrap;
-      border-radius: 6px; font-size: 13px;
-      border: 1px solid var(--vscode-panel-border);
-    }
     .row { display: flex; gap: 10px; }
     .row > * { flex: 1; }
     .tabs { display: flex; margin-top: 10px; border-bottom: 1px solid var(--vscode-panel-border); }
-    .tab {
-      padding: 8px 15px; text-align: center; cursor: pointer;
-      background: var(--vscode-panel-background);
-      border: 1px solid transparent;
-      border-bottom: none;
-      border-radius: 5px 5px 0 0;
-      color: var(--vscode-tab-inactiveForeground);
-    }
-    .tab:hover {
-      color: var(--vscode-tab-activeForeground);
-    }
-    .tab.active {
-      background: var(--vscode-tab-activeBackground);
-      border-color: var(--vscode-panel-border);
-      border-bottom: 1px solid var(--vscode-tab-activeBackground);
-      font-weight: bold;
-      color: var(--vscode-tab-activeForeground);
-    }
+    .tab { padding: 8px 15px; text-align: center; cursor: pointer; background: var(--vscode-panel-background); border: 1px solid transparent; border-bottom: none; border-radius: 5px 5px 0 0; color: var(--vscode-tab-inactiveForeground); }
+    .tab:hover { color: var(--vscode-tab-activeForeground); }
+    .tab.active { background: var(--vscode-tab-activeBackground); border-color: var(--vscode-panel-border); border-bottom: 1px solid var(--vscode-tab-activeBackground); font-weight: bold; color: var(--vscode-tab-activeForeground); }
     .tab-content { border: 1px solid var(--vscode-panel-border); padding: 10px; background: var(--vscode-panel-background); }
     .hidden { display: none; }
+    #historyList, #envList { list-style-type: none; padding: 0; }
+    #historyList li, #envList li { padding: 8px; border-bottom: 1px solid var(--vscode-panel-border); cursor: pointer; }
+    #historyList li:hover, #envList li:hover { background: var(--vscode-panel-hoverBackground); }
+    .history-item-details, .env-item-details { color: var(--vscode-descriptionForeground); font-size: 11px; }
+    .monaco-editor-container { height: 200px; border: 1px solid var(--vscode-input-border); }
+    .response-tabs-content { margin-top: 10px; }
+    .response-header { display: flex; justify-content: space-between; align-items: center; }
+    .status-2xx { color: var(--vscode-gitDecoration-untrackedResourceForeground); }
+    .status-3xx { color: var(--vscode-terminal-ansiYellow); }
+    .status-4xx, .status-5xx { color: var(--vscode-terminal-ansiRed); }
+    .info-bar { display: flex; gap: 20px; color: var(--vscode-descriptionForeground); font-size: 12px; margin-top: 5px; }
   </style>
 </head>
 <body>
@@ -71,6 +62,8 @@
     <div class="tab active" data-tab="auth">Auth</div>
     <div class="tab" data-tab="headers">Headers</div>
     <div class="tab" data-tab="body">Body</div>
+    <div class="tab" data-tab="history">History</div>
+    <div class="tab" data-tab="environments">Environments</div>
   </div>
 
   <div id="authContent" class="tab-content">
@@ -87,7 +80,7 @@
 
   <div id="headersContent" class="tab-content hidden">
     <label>Headers (JSON):</label>
-    <textarea id="headersInput" rows="4">{}</textarea>
+    <div id="headersEditor" class="monaco-editor-container"></div>
   </div>
 
   <div id="bodyContent" class="tab-content hidden">
@@ -99,25 +92,56 @@
       <option value="raw">Raw</option>
       <option value="formdata">Multipart Form-Data (Files)</option>
     </select>
-
     <div id="bodyJsonRaw" class="hidden">
       <label>Body:</label>
-      <textarea id="bodyInput" rows="6"></textarea>
+      <div id="bodyEditor" class="monaco-editor-container"></div>
     </div>
-
     <div id="bodyFiles" class="hidden">
       <label>Select Files:</label>
       <input type="file" id="fileInput" multiple />
       <label>Extra Fields (JSON):</label>
-      <textarea id="extraFields" rows="3" placeholder='{"key":"value"}'></textarea>
+      <div id="extraFieldsEditor" class="monaco-editor-container"></div>
+    </div>
+  </div>
+
+  <div id="historyContent" class="tab-content hidden">
+    <p>Click on a request to load it.</p>
+    <ul id="historyList"></ul>
+  </div>
+
+  <div id="environmentsContent" class="tab-content hidden">
+    <label>Select Environment:</label>
+    <select id="envSelect"></select>
+    <button id="addEnvBtn" style="margin-top: 10px;">Add New Environment</button>
+    <div id="envVarsContainer">
+      <label>Variables (JSON):</label>
+      <div id="envVarsEditor" class="monaco-editor-container"></div>
     </div>
   </div>
 
   <button id="sendBtn">Send Request</button>
 
   <h3>Response:</h3>
-  <pre id="response"></pre>
+  <div class="tabs response-tabs-content">
+    <div class="tab active" data-tab="responseBody">Body</div>
+    <div class="tab" data-tab="responseHeaders">Headers</div>
+    <div class="tab" data-tab="responseDetails">Details</div>
+  </div>
 
+  <div id="responseBodyContent" class="tab-content">
+    <pre id="responseBody"></pre>
+  </div>
+  <div id="responseHeadersContent" class="tab-content hidden">
+    <pre id="responseHeaders"></pre>
+  </div>
+  <div id="responseDetailsContent" class="tab-content hidden">
+    <pre id="responseDetails"></pre>
+  </div>
+  
+  <script src="{{monacoLoader}}"></script>
+  <script>
+    window.MONACO_BASE = "{{monacoBase}}";
+  </script>
   <script src="{{mainScript}}"></script>
 </body>
 </html>
