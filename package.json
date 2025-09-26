@@ -1,25 +1,86 @@
 {
   "name": "testapi",
-  "displayName": "testapi",
-  "description": "API testing extension with multimedia support",
-  "version": "0.0.1",
+  "displayName": "TestAPI - REST API Client",
+  "description": "Lightweight REST API Client for VS Code - Thunder Client alternative with file upload support",
+  "version": "1.0.0",
+  "publisher": "koded-dev",
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Testing",
+    "Debuggers"
   ],
+  "keywords": [
+    "api",
+    "rest",
+    "http",
+    "testing",
+    "client",
+    "request",
+    "postman",
+    "thunder client",
+    "insomnia",
+    "api testing",
+    "http client",
+    "rest client",
+    "api development",
+    "debugging",
+    "file upload",
+    "multipart"
+  ],
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#007ACC",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Koded0214h/Test-IP"
+  },
+  "homepage": "https://github.com/Koded0214h/Test-IP",
+  "bugs": {
+    "url": "https://github.com/Koded0214h/Test-IP/issues"
+  },
+  "license": "MIT",
   "activationEvents": [
-    "onCommand:testapi.helloWorld"
+    "onCommand:testapi.open"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "testapi.runRequest",
-        "title": "Run API Request"
+        "command": "testapi.open",
+        "title": "Open TestAPI",
+        "category": "TestAPI"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "TestAPI",
+      "properties": {
+        "testapi.autoSaveHistory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save request history"
+        },
+        "testapi.maxHistoryItems": {
+          "type": "number",
+          "default": 50,
+          "description": "Maximum number of history items to keep"
+        },
+        "testapi.defaultEnvironment": {
+          "type": "string",
+          "default": "default",
+          "description": "Default environment to use"
+        },
+        "testapi.prettifyJsonResponses": {
+          "type": "boolean",
+          "default": true,
+          "description": "Prettify JSON responses automatically"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -27,7 +88,9 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
