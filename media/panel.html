@@ -4,120 +4,565 @@
   <meta charset="UTF-8">
   <title>TestAPI - API Tester</title>
   <style>
-    body { font-family: sans-serif; padding: 10px; background: var(--vscode-editor-background); color: var(--vscode-editor-foreground); }
-    h2 { margin-top: 0; }
-    label { font-weight: bold; display: block; margin-top: 10px; }
-    input, textarea, select, button {
-      width: 100%; margin: 5px 0; padding: 8px;
-      border-radius: 5px; border: 1px solid var(--vscode-input-border);
-      background-color: var(--vscode-input-background);
-      color: var(--vscode-input-foreground);
-      font-size: 14px;
-    }
-    button { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; cursor: pointer; }
-    button:hover { background: var(--vscode-button-hoverBackground); }
-    pre {
-      background: var(--vscode-editor-background); color: var(--vscode-terminal-ansiBrightGreen);
-      padding: 10px; white-space: pre-wrap;
-      border-radius: 6px; font-size: 13px;
-      border: 1px solid var(--vscode-panel-border);
-    }
-    .row { display: flex; gap: 10px; }
-    .row > * { flex: 1; }
-    .tabs { display: flex; margin-top: 10px; border-bottom: 1px solid var(--vscode-panel-border); }
-    .tab {
-      padding: 8px 15px; text-align: center; cursor: pointer;
-      background: var(--vscode-panel-background);
-      border: 1px solid transparent;
-      border-bottom: none;
-      border-radius: 5px 5px 0 0;
-      color: var(--vscode-tab-inactiveForeground);
-    }
-    .tab:hover {
-      color: var(--vscode-tab-activeForeground);
-    }
-    .tab.active {
-      background: var(--vscode-tab-activeBackground);
-      border-color: var(--vscode-panel-border);
-      border-bottom: 1px solid var(--vscode-tab-activeBackground);
-      font-weight: bold;
-      color: var(--vscode-tab-activeForeground);
-    }
-    .tab-content { border: 1px solid var(--vscode-panel-border); padding: 10px; background: var(--vscode-panel-background); }
-    .hidden { display: none; }
+/* Softer, Cleaner Theme */
+:root {
+    --primary: #007acc;
+    --primary-dark: #005a9e;
+    --background: #1e1e1e;
+    --sidebar-bg: #252526;
+    --panel-bg: #2d2d30;
+    --border: #3e3e42;
+    --border-light: #464647;
+    --hover: #2a2d2e;
+    --text: #cccccc;
+    --text-secondary: #969696;
+    --text-muted: #6c6c6c;
+    --success: #4CAF50;
+    --warning: #ff9800;
+    --error: #f44336;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--background);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    font-size: 13px;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    height: 100vh;
+    gap: 1px;
+}
+
+/* Sidebar - Softer */
+.sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel-bg);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.sidebar-tabs {
+    display: flex;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-tab {
+    flex: 1;
+    padding: 12px 0;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.sidebar-tab.active {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+}
+
+.sidebar-tab:hover {
+    background: var(--hover);
+}
+
+.history-list, .env-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.history-item, .env-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 12px;
+}
+
+.history-item:hover, .env-item:hover {
+    background: var(--hover);
+}
+
+.history-item-details {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--background);
+}
+
+/* Request Bar - Cleaner */
+.request-bar {
+    display: flex;
+    padding: 15px 20px;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    align-items: center;
+}
+
+.method-select {
+    width: 110px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+}
+
+.method-select:focus {
+    border-color: var(--primary);
+}
+
+.url-input {
+    flex: 1;
+    background: var(--background);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+}
+
+.url-input:focus {
+    border-color: var(--primary);
+}
+
+.url-input::placeholder {
+    color: var(--text-muted);
+}
+
+.send-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.send-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Tab Content Area */
+.tab-content-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background: var(--background);
+}
+
+.left-tabs {
+    width: 200px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.left-tab {
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 13px;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.left-tab.active {
+    background: var(--primary);
+    color: white;
+    border-left: 3px solid var(--primary-dark);
+}
+
+.left-tab:hover:not(.active) {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.tab-panel {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--background);
+}
+
+.tab-panel h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Form Elements */
+select, input {
+    background: var(--background);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+select:focus, input:focus {
+    border-color: var(--primary);
+}
+
+/* Monaco Editors - Smaller, Better */
+.monaco-editor-container {
+    height: 200px !important;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+/* Response Area */
+.response-area {
+    height: 35%;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: var(--background);
+}
+
+.response-tabs {
+    display: flex;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.response-tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 13px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.response-tab.active {
+    border-bottom-color: var(--primary);
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.response-tab:hover {
+    color: var(--text);
+}
+
+.response-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #1e1e1e;
+}
+
+.response-content pre {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status-2xx { background: var(--success); color: white; }
+.status-3xx { background: var(--warning); color: black; }
+.status-4xx { background: var(--error); color: white; }
+.status-5xx { background: var(--error); color: white; }
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Body Type Sections */
+.body-section {
+    margin-top: 15px;
+}
+
+.section-header {
+    margin-bottom: 8px;
+}
+
+.section-header label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+}
+
+/* File Upload Styles */
+.file-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.file-upload-area:hover {
+    border-color: var(--primary);
+}
+
+.file-input {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.file-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 12px;
+}
+
+.file-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.remove-file {
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.remove-file:hover {
+    background: #d32f2f;
+}
+
+/* Form Data Sections */
+.form-data-section {
+    margin-bottom: 20px;
+}
+
+.form-data-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--border-light);
+}
   </style>
 </head>
 <body>
-  <h2>TestAPI - API Request</h2>
+  <div class="container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+          <div class="sidebar-header">
+              <h3>TestAPI</h3>
+          </div>
+          <div class="sidebar-tabs">
+              <div class="sidebar-tab active" data-tab="history">History</div>
+              <div class="sidebar-tab" data-tab="environments">Environments</div>
+          </div>
+          <div class="history-list" id="historyList"></div>
+          <div class="env-list hidden" id="envList"></div>
+      </div>
 
-  <div class="row">
-    <div>
-      <label>Method:</label>
-      <select id="method">
-        <option>GET</option>
-        <option>POST</option>
-        <option>PUT</option>
-        <option>DELETE</option>
-        <option>PATCH</option>
-      </select>
-    </div>
-    <div style="flex:3">
-      <label>URL:</label>
-      <input id="url" placeholder="https://api.example.com" />
-    </div>
-  </div>
+      <!-- Main Content -->
+      <div class="main-content">
+          <!-- Request Bar -->
+          <div class="request-bar">
+              <select class="method-select" id="method">
+                  <option>GET</option>
+                  <option>POST</option>
+                  <option>PUT</option>
+                  <option>DELETE</option>
+                  <option>PATCH</option>
+                  <option>HEAD</option>
+                  <option>OPTIONS</option>
+              </select>
+              <input type="text" class="url-input" id="url" placeholder="Enter request URL">
+              <button class="send-btn" id="sendBtn">Send</button>
+          </div>
 
-  <div class="tabs">
-    <div class="tab active" data-tab="auth">Auth</div>
-    <div class="tab" data-tab="headers">Headers</div>
-    <div class="tab" data-tab="body">Body</div>
-  </div>
+          <!-- Tab Content Area -->
+          <div class="tab-content-area">
+              <!-- Left Tabs -->
+              <div class="left-tabs">
+                  <div class="left-tab active" data-tab="params">Params</div>
+                  <div class="left-tab" data-tab="auth">Authentication</div>
+                  <div class="left-tab" data-tab="headers">Headers</div>
+                  <div class="left-tab" data-tab="body">Body</div>
+              </div>
 
-  <div id="authContent" class="tab-content">
-    <label>Authentication:</label>
-    <select id="authType">
-      <option value="none">None</option>
-      <option value="bearer">Bearer Token</option>
-      <option value="basic">Basic Auth</option>
-      <option value="apikey">API Key (Header)</option>
-    </select>
-    <label>Token / Credentials:</label>
-    <input id="authValue" placeholder="Enter token or user:pass" />
-  </div>
+              <!-- Tab Panels -->
+              <div class="tab-panel">
+                  <!-- Params Tab -->
+                  <div id="paramsContent">
+                      <h4>Query Parameters</h4>
+                      <div id="paramsEditor" class="monaco-editor-container"></div>
+                  </div>
 
-  <div id="headersContent" class="tab-content hidden">
-    <label>Headers (JSON):</label>
-    <textarea id="headersInput" rows="4">{}</textarea>
-  </div>
+                  <!-- Auth Tab -->
+                  <div id="authContent" class="hidden">
+                      <h4>Authentication</h4>
+                      <select id="authType">
+                          <option value="none">No Auth</option>
+                          <option value="bearer">Bearer Token</option>
+                          <option value="basic">Basic Auth</option>
+                          <option value="apikey">API Key</option>
+                      </select>
+                      <input id="authValue" placeholder="Enter credentials">
+                  </div>
 
-  <div id="bodyContent" class="tab-content hidden">
-    <label>Body Type:</label>
-    <select id="bodyType">
+                  <!-- Headers Tab -->
+                  <div id="headersContent" class="hidden">
+                      <h4>Headers</h4>
+                      <div id="headersEditor" class="monaco-editor-container"></div>
+                  </div>
+
+                  <!-- Body Tab -->
+<!-- Body Tab -->
+<div id="bodyContent" class="hidden">
+  <h4>Body</h4>
+  <select id="bodyType">
       <option value="none">None</option>
       <option value="json">JSON</option>
+      <option value="formdata">Form Data</option>
+      <option value="raw">Raw Text</option>
       <option value="urlencoded">x-www-form-urlencoded</option>
-      <option value="raw">Raw</option>
-      <option value="formdata">Multipart Form-Data (Files)</option>
-    </select>
+  </select>
+  
+  <!-- JSON/Raw/URLEncoded Body -->
+  <div id="bodyJsonRaw" class="body-section">
+      <div class="section-header">
+          <label>Content:</label>
+      </div>
+      <div id="bodyEditor" class="monaco-editor-container"></div>
+  </div>
+  
+  <!-- Form Data Body -->
+  <div id="bodyFormData" class="body-section hidden">
+      <div class="form-data-section">
+          <div class="section-header">
+              <label>Files:</label>
+          </div>
+          <div class="file-upload-area">
+              <input type="file" id="fileInput" multiple class="file-input">
+              <div class="file-list" id="fileList"></div>
+          </div>
+      </div>
+      
+      <div class="form-data-section">
+          <div class="section-header">
+              <label>Form Fields (JSON):</label>
+          </div>
+          <div id="formFieldsEditor" class="monaco-editor-container"></div>
+      </div>
+  </div>
+</div>
+              </div>
+          </div>
 
-    <div id="bodyJsonRaw" class="hidden">
-      <label>Body:</label>
-      <textarea id="bodyInput" rows="6"></textarea>
-    </div>
-
-    <div id="bodyFiles" class="hidden">
-      <label>Select Files:</label>
-      <input type="file" id="fileInput" multiple />
-      <label>Extra Fields (JSON):</label>
-      <textarea id="extraFields" rows="3" placeholder='{"key":"value"}'></textarea>
-    </div>
+          <!-- Response Area -->
+          <div class="response-area">
+              <div class="response-tabs">
+                  <div class="response-tab active" data-tab="responseBody">Body</div>
+                  <div class="response-tab" data-tab="responseHeaders">Headers</div>
+                  <div class="response-tab" data-tab="responseCookies">Cookies</div>
+              </div>
+              <div class="response-content">
+                  <pre id="responseBody"></pre>
+                  <pre id="responseHeaders" class="hidden"></pre>
+                  <pre id="responseCookies" class="hidden"></pre>
+              </div>
+          </div>
+      </div>
   </div>
 
-  <button id="sendBtn">Send Request</button>
-
-  <h3>Response:</h3>
-  <pre id="response"></pre>
-
+  <script>
+      window.MONACO_BASE = "{{monacoBase}}";
+  </script>
+  <script src="{{monacoLoader}}"></script>
   <script src="{{mainScript}}"></script>
 </body>
 </html>
