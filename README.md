@@ -4,7 +4,7 @@
 
 **TestAPI** is a powerful, Thunder Client-inspired REST API testing tool built directly into VS Code. Test your APIs without leaving your editor with a beautiful, intuitive interface that supports all modern API testing features.
 
-![TestAPI Interface Preview](https://via.placeholder.com/800x400/1e1e1e/ffffff?text=TestAPI+Interface+Preview)
+![TestAPI Interface Preview](https://raw.githubusercontent.com/Koded0214h/Test-IP/master/media/interface.png)
 
 ---
 
