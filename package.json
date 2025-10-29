@@ -2,7 +2,7 @@
   "name": "testapi",
   "displayName": "TestAPI - REST API Client",
   "description": "Lightweight REST API Client for VS Code - Thunder Client alternative with file upload support",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "koded-dev",
   "engines": {
     "vscode": "^1.96.0"

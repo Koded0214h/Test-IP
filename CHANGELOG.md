@@ -2,8 +2,12 @@
 
 All notable changes to the TestAPI extension will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.1] - 2025-10-29
+
+### Fixed
+- Fixed activation command mismatch preventing extension from starting
+- Corrected command registration from `testapi.runRequest` to `testapi.open`
+- Improved extension activation reliability
 
 ## [1.0.0] - 2025-09-26
 

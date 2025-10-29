@@ -9,7 +9,7 @@ const ENVIRONMENTS_KEY = 'apiEnvironments';
 const ACTIVE_ENVIRONMENT_KEY = 'activeEnvironment';
 
 export function activate(context: vscode.ExtensionContext) {
-  let disposable = vscode.commands.registerCommand('testapi.runRequest', () => {
+  let disposable = vscode.commands.registerCommand('testapi.open', () => {
     const panel = vscode.window.createWebviewPanel(
       'testapi',
       'TestAPI - API Tester',
